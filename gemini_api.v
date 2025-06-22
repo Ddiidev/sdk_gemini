@@ -1,4 +1,4 @@
-module main
+module sdk_gemini
 
 import json
 import structs
