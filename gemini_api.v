@@ -15,9 +15,9 @@ const base_url = 'https://generativelanguage.googleapis.com/v1beta/models'
 pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload structs.GeminiRequest) !structs.GeminiResponse {
 	url := '${base_url}/${model}:generateContent?key=${sdk.api_key}'
 
-	payload_bytes := json.encode(req_payload)
+	payload:= json.encode(req_payload)
 
-	mut req := http.new_request(.post, url, string(payload_bytes))
+	mut req := http.new_request(.post, url, payload)
 	req.header.set(.content_type, 'application/json')
 
 	resp := req.do()!

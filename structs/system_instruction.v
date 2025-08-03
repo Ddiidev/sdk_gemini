@@ -1,6 +1,6 @@
 module structs
 
 pub struct SystemInstruction {
-pub:
+pub mut:
 	parts []Part @[json: parts]
 }
