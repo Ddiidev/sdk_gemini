@@ -7,6 +7,7 @@ pub enum Models {
 	gemini_2_0_flash_lite
 	gemini_2_0_flash_thinking_exp_01_21
 	gemini_2_5_flash
+	gemini_3_0_flash_preview
 }
 
 pub fn (m Models) str() string {
@@ -28,6 +29,9 @@ pub fn (m Models) str() string {
 		}
 		.gemini_2_5_flash {
 			'gemini-2.5-flash'
+		}
+		.gemini_3_0_flash_preview {
+			'gemini-3-flash-preview'
 		}
 	}
 }
