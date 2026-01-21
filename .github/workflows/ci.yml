@@ -23,6 +23,8 @@ jobs:
           check-latest: true
       - run: v version
       - run: v -stats test tests
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
   docs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -32,6 +34,7 @@ jobs:
         with:
           check-latest: true
       - run: v doc -readme -f html . -o docs
+      - run: mv docs/sdk_gemini.html docs/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs
