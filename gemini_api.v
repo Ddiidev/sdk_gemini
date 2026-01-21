@@ -15,7 +15,12 @@ const base_url = 'https://generativelanguage.googleapis.com/v1beta/models'
 pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload structs.GeminiRequest) !structs.GeminiResponse {
 	url := '${base_url}/${model}:generateContent?key=${sdk.api_key}'
 
-	payload:= json.encode(req_payload)
+	payload := if model.is_gemma() {
+		req_payload_addapted := adapt_to_gemma(req_payload)
+		json.encode(req_payload_addapted)
+	} else {
+		json.encode(req_payload)
+	}
 
 	mut req := http.new_request(.post, url, payload)
 	req.header.set(.content_type, 'application/json')
@@ -29,6 +34,32 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 	decoded := json.decode(structs.GeminiResponse, resp.body)!
 
 	return decoded
+}
+
+fn adapt_to_gemma(req_payload structs.GeminiRequest) structs.GeminiRequest {
+	mut req_payload_addapted := req_payload
+
+	if req_payload_addapted.system_instruction != none {
+		mut contents := []structs.Content{}
+		for i, curr_content in req_payload_addapted.contents {
+			if i == 0 {
+				mut parts := curr_content.parts.clone()
+				parts << req_payload_addapted.system_instruction.parts
+				contents << structs.Content{
+					role:  .user
+					parts: parts
+				}
+			}
+			contents << curr_content
+		}
+		req_payload_addapted = structs.GeminiRequest{
+			...req_payload_addapted
+			contents:           contents
+			system_instruction: none
+		}
+	}
+
+	return req_payload_addapted
 }
 
 // send_prompt Sends a prompt to the Gemini API and returns the model's response.
