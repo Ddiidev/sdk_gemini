@@ -1,5 +1,6 @@
 module sdk_gemini
 
+import os
 import json
 import structs
 import net.http
@@ -10,6 +11,25 @@ pub:
 }
 
 const base_url = 'https://generativelanguage.googleapis.com/v1beta/models'
+
+// get_api_key Reads an Gemini API key from an environment variable.
+pub fn get_api_key(key_var string) !string {
+	api_key := os.getenv(key_var)
+	if api_key == '' {
+		return structs.KeyEmptyError{}
+	}
+	if !api_key.starts_with('AIza') {
+		return structs.KeySequenceError{}
+	}
+	return api_key
+}
+
+// new Returns a GeminiSDK.
+pub fn new(api_key string) GeminiSDK {
+	return GeminiSDK{
+		api_key: api_key
+	}
+}
 
 // completation Sends a request to the Gemini API and returns the response.
 pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload structs.GeminiRequest) !structs.GeminiResponse {
