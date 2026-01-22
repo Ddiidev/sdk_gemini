@@ -32,10 +32,14 @@ v install https://github.com/Ddiidev/sdk_gemini
 import sdk_gemini
 import sdk_gemini.structs
 
-// Initialize the SDK with your API key
-mut sdk := sdk_gemini.GeminiSDK{
-    api_key: $env('GEMINI_API_KEY')
+// Read API key from environment
+api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
+    log.error(err.msg())
+    return
 }
+
+// Initialize the SDK with your API key
+mut sdk := sdk_gemini.new(api_key)
 
 // Send a simple prompt
 response := sdk.send_prompt(
