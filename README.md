@@ -47,7 +47,8 @@ response := sdk.send_prompt(
     'Tell me about João Pessoa, Paraíba',
     'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
 ) or {
-    panic('Failed to get response: ${err}')
+		log.error(err.code().str() + ': ' + err.msg())
+		return
 }
 
 // Access the response

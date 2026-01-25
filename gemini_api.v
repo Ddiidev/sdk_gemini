@@ -47,8 +47,18 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 
 	resp := req.do()!
 
-	if resp.status_code != 200 {
-		return error_with_code(resp.body, resp.status_code)
+	match resp.status_code {
+		429 {
+			return error_with_code('exceeded current quota', resp.status_code)
+		}
+		503 {
+			return error_with_code('model is overloaded', resp.status_code)
+		}
+		else {
+			if resp.status_code != 200 {
+				return error_with_code(resp.body, resp.status_code)
+			}
+		}
 	}
 
 	decoded := json.decode(structs.GeminiResponse, resp.body)!
