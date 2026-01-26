@@ -4,6 +4,7 @@ import os
 import json
 import structs
 import net.http
+import log
 
 pub struct GeminiSDK {
 pub:
@@ -31,7 +32,8 @@ pub fn new(api_key string) GeminiSDK {
 	}
 }
 
-// completation Sends a request to the Gemini API and returns the response.
+// completation Sends a request to the Gemini API and returns the response or an error.
+// Log level 'debug' logs the full model response body in case of an error occuring.
 pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload structs.GeminiRequest) !structs.GeminiResponse {
 	url := '${base_url}/${model}:generateContent?key=${sdk.api_key}'
 
@@ -49,17 +51,21 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 
 	match resp.status_code {
 		400 {
-			return error_with_code('invalid JSON payload', resp.status_code)
+			log.debug(resp.body)
+			return structs.InvalidPayloadError{}
 		}
 		429 {
-			return error_with_code('exceeded current quota', resp.status_code)
+			log.debug(resp.body)
+			return structs.ExceededQuotaError{}
 		}
 		503 {
-			return error_with_code('model is overloaded', resp.status_code)
+			log.debug(resp.body)
+			return structs.ModelOverloadedError{}
 		}
 		else {
 			if resp.status_code != 200 {
-				return error_with_code(resp.body, resp.status_code)
+				log.debug(resp.body)
+				return structs.UnknownResponseError{}
 			}
 		}
 	}
