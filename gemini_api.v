@@ -48,6 +48,9 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 	resp := req.do()!
 
 	match resp.status_code {
+		400 {
+			return error_with_code('invalid JSON payload', resp.status_code)
+		}
 		429 {
 			return error_with_code('exceeded current quota', resp.status_code)
 		}
