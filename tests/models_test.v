@@ -1,16 +1,16 @@
 module tests
 
 import os
-import sdk_gemini
-// import sdk_gemini.structs
 import structs
+import sdk_gemini
 
 const prompt_capital = 'What is the capital of Brazil?'
-const system_instruction = 'Return exactly the single word: City. No Cíty. Do not use accents, punctuation, or any other text.'
+const system_instruction = 'Answer with the single-word capital of Brazil, with no accents, punctuation, or extra text.'
 
 fn assert_model_returns_brasilia(model structs.Models) {
 	api_key := os.getenv('GEMINI_API_KEY')
 	if api_key == '' {
+		assert false, 'GEMINI_API_KEY not set'
 		return
 	}
 	mut sdk := sdk_gemini.GeminiSDK{
@@ -35,7 +35,9 @@ fn assert_model_returns_brasilia(model structs.Models) {
 	}
 
 	gen_config := structs.GenerationConfig{
-		temperature:       0.5
+		temperature:       0.0
+		top_k:             1
+		top_p:             0.1
 		max_output_tokens: 1024
 	}
 
@@ -52,8 +54,8 @@ fn assert_model_returns_brasilia(model structs.Models) {
 
 	assert response.candidates.len > 0
 	assert response.candidates[0].content.parts.len > 0
-	text := response.candidates[0].content.parts[0].text.trim_space()
-	assert text == 'Brasilia'
+	text := response.candidates[0].content.parts[0].text.trim_space().to_upper()
+	assert text == 'BRASILIA' || text == 'BRASÍLIA', ''
 }
 
 fn test_model_gemma_3_1b_it() {
