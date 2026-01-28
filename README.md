@@ -32,6 +32,9 @@ v install https://github.com/Ddiidev/sdk_gemini
 import sdk_gemini
 import sdk_gemini.structs
 
+//log level 'debug' provides full model response when errors occur
+log.set_level(.debug)
+
 // Read API key from environment
 api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
     log.error(err.msg())
@@ -47,7 +50,7 @@ response := sdk.send_prompt(
     'Tell me about João Pessoa, Paraíba',
     'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
 ) or {
-		log.error(err.code().str() + ': ' + err.msg())
+		log.error(err.msg())
 		return
 }
 
