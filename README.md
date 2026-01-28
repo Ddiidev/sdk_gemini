@@ -54,9 +54,35 @@ response := sdk.send_prompt(
 		return
 }
 
-// Access the response
-if response.candidates.len > 0 {
-    println(response.candidates[0].content.parts[0].text)
+content := response.str()
+println(content)
+```
+
+## Modo Seguro para Obter Conteúdo
+
+Use o iterador do `GeminiResponse` para percorrer todas as partes com segurança.
+
+```v
+for part in response {
+	println(part)
+}
+```
+
+Para obter todo o conteúdo concatenado em uma única string, use `str()`:
+
+```v
+text := response.str()
+if text != '' {
+	println(text)
+}
+```
+
+Você também pode pegar diretamente a última parte com `last()`:
+
+```v
+last := response.last() or { '' }
+if last != '' {
+	println(last)
 }
 ```
 

@@ -75,6 +75,9 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 	return decoded
 }
 
+// adapt_to_gemma Adapts a GeminiRequest to the Gemma model.
+// Gemma models do not support system instructions.
+// This function moves the system instruction to the first content part.
 fn adapt_to_gemma(req_payload structs.GeminiRequest) structs.GeminiRequest {
 	mut req_payload_addapted := req_payload
 
@@ -88,8 +91,9 @@ fn adapt_to_gemma(req_payload structs.GeminiRequest) structs.GeminiRequest {
 					role:  .user
 					parts: parts
 				}
+			} else {
+				contents << curr_content
 			}
-			contents << curr_content
 		}
 		req_payload_addapted = structs.GeminiRequest{
 			...req_payload_addapted
