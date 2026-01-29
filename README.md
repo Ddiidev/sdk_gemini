@@ -27,40 +27,41 @@ v install https://github.com/Ddiidev/sdk_gemini
 
 ```v
 // import Ddiidev.sdk_gemini //for install from vpm
-// import Ddiidev.structs //for install from vpm
 // for install github repo
+import log // built-in V module
 import sdk_gemini
-import sdk_gemini.structs
 
-//log level 'debug' provides full model response when errors occur
-log.set_level(.debug)
+fn main() {
+    //log level 'debug' provides full model response when errors occur
+    log.set_level(.debug)
 
-// Read API key from environment
-api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
-    log.error(err.msg())
-    return
+    // Read API key from environment
+    api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
+        log.error(err.msg())
+        return
+    }
+
+    // Initialize the SDK with your API key
+    mut sdk := sdk_gemini.new(api_key)
+
+    // Send a simple prompt
+    response := sdk.send_prompt(
+        .gemini_3_0_flash_preview,
+        'Tell me about João Pessoa, Paraíba',
+        'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
+    ) or {
+            log.error(err.msg())
+            return
+    }
+
+    content := response.str()
+    println(content)
 }
-
-// Initialize the SDK with your API key
-mut sdk := sdk_gemini.new(api_key)
-
-// Send a simple prompt
-response := sdk.send_prompt(
-    .gemini_3_0_flash_preview,
-    'Tell me about João Pessoa, Paraíba',
-    'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
-) or {
-		log.error(err.msg())
-		return
-}
-
-content := response.str()
-println(content)
 ```
 
-## Modo Seguro para Obter Conteúdo
+## Safe Way to Get Content
 
-Use o iterador do `GeminiResponse` para percorrer todas as partes com segurança.
+Use the `GeminiResponse` iterator to safely iterate through all parts.
 
 ```v
 for part in response {
@@ -68,7 +69,7 @@ for part in response {
 }
 ```
 
-Para obter todo o conteúdo concatenado em uma única string, use `str()`:
+To get all concatenated content in a single string, use `str()`:
 
 ```v
 text := response.str()
@@ -77,7 +78,7 @@ if text != '' {
 }
 ```
 
-Você também pode pegar diretamente a última parte com `last()`:
+You can also directly get the last part with `last()`:
 
 ```v
 last := response.last() or { '' }
