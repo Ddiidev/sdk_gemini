@@ -27,36 +27,63 @@ v install https://github.com/Ddiidev/sdk_gemini
 
 ```v
 // import Ddiidev.sdk_gemini //for install from vpm
-// import Ddiidev.structs //for install from vpm
 // for install github repo
+import log // built-in V module
 import sdk_gemini
-import sdk_gemini.structs
 
-//log level 'debug' provides full model response when errors occur
-log.set_level(.debug)
+fn main() {
+    //log level 'debug' provides full model response when errors occur
+    log.set_level(.debug)
 
-// Read API key from environment
-api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
-    log.error(err.msg())
-    return
+    // Read API key from environment
+    api_key := sdk_gemini.get_api_key('GEMINI_API_KEY') or {
+        log.error(err.msg())
+        return
+    }
+
+    // Initialize the SDK with your API key
+    mut sdk := sdk_gemini.new(api_key)
+
+    // Send a simple prompt
+    response := sdk.send_prompt(
+        .gemini_3_0_flash_preview,
+        'Tell me about João Pessoa, Paraíba',
+        'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
+    ) or {
+            log.error(err.msg())
+            return
+    }
+
+    content := response.str()
+    println(content)
 }
+```
 
-// Initialize the SDK with your API key
-mut sdk := sdk_gemini.new(api_key)
+## Safe Way to Get Content
 
-// Send a simple prompt
-response := sdk.send_prompt(
-    .gemini_3_0_flash_preview,
-    'Tell me about João Pessoa, Paraíba',
-    'You are a tour guide from Brazil, specifically from the Northeast region, João Pessoa and Paraíba state'
-) or {
-		log.error(err.msg())
-		return
+Use the `GeminiResponse` iterator to safely iterate through all parts.
+
+```v
+for part in response {
+	println(part)
 }
+```
 
-// Access the response
-if response.candidates.len > 0 {
-    println(response.candidates[0].content.parts[0].text)
+To get all concatenated content in a single string, use `str()`:
+
+```v
+text := response.str()
+if text != '' {
+	println(text)
+}
+```
+
+You can also directly get the last part with `last()`:
+
+```v
+last := response.last() or { '' }
+if last != '' {
+	println(last)
 }
 ```
 
