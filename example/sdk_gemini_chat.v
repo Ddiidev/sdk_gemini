@@ -22,10 +22,9 @@ mut:
 }
 
 pub struct Spinner {
-	set  []string
-	done chan bool
-mut:
-	run bool
+	set       []string
+	stop_chan chan bool
+	done_chan chan bool
 }
 
 fn main() {
@@ -40,7 +39,7 @@ fn main() {
 		file_out: 'gemini_response.md'
 	}
 
-	shared spin := Spinner{
+	spin := Spinner{
 		set: ['.', '..', '...', ' ']
 	}
 
@@ -115,43 +114,41 @@ fn write_response_buffer(conf ReplConfig, repl ReplState) ! {
 	os.write_file(conf.file_out, repl.response_buffer) or { return err }
 }
 
-pub fn (shared s Spinner) start() {
-	lock s {
-		s.run = true
-	}
+pub fn (s &Spinner) start() {
 	// hides cursor
 	print('\033[?25l')
 	flush_stdout()
-	go fn [shared s] () {
+	go fn [s] () {
 		for {
-			if s.run {
-				for v in s.set {
-					print(v)
-					flush_stdout()
-					time.sleep(200 * time.millisecond)
-					// erase current line  and reset cursor to start of current line
+			select {
+				_ := <-s.stop_chan {
 					print('\033[K\r')
 					flush_stdout()
+					// makecursor visible
+					print('\033[?25h')
+					flush_stdout()
+					s.done_chan <- true
+					return
 				}
-			} else {
-				print('\033[K\r')
-				flush_stdout()
-				// makecursor visible
-				print('\033[?25h')
-				flush_stdout()
-				s.done <- true
-				return
+				else {
+					for v in s.set {
+						print(v)
+						flush_stdout()
+						time.sleep(200 * time.millisecond)
+						// erase current line  and reset cursor to start of current line
+						print('\033[K\r')
+						flush_stdout()
+					}
+				}
 			}
 		}
 	}()
 }
 
-pub fn (shared s Spinner) stop() {
-	lock s {
-		s.run = false
-	}
+pub fn (s &Spinner) stop() {
+	s.stop_chan <- true
 	select {
-		_ := <-s.done {
+		_ := <-s.done_chan {
 			return
 		}
 	}
