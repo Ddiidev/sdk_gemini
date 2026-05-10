@@ -22,6 +22,8 @@ pub struct ModelOverloadedError {
 
 pub struct UnknownResponseError {
 	Error
+pub:
+	code int
 }
 
 fn (err KeyEmptyError) msg() string {
@@ -45,5 +47,5 @@ fn (err ModelOverloadedError) msg() string {
 }
 
 fn (err UnknownResponseError) msg() string {
-	return 'Unknown model response error (code != 200)'
+	return 'Unknown model response error (code ${err.code})'
 }

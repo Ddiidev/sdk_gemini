@@ -1,10 +1,8 @@
 module structs
 
 pub enum Models {
-	gemma_3_1b_it
-	gemma_3_4b_it
-	gemma_3_12b_it
-	gemma_3_27b_it
+	gemma_4_26b_a4b_it
+	gemma_4_31b_it
 	gemini_2_5_flash_lite_preview_09_2025
 	gemini_2_5_flash_lite
 	gemini_2_5_flash
@@ -13,16 +11,10 @@ pub enum Models {
 
 pub fn (m Models) is_gemma() bool {
 	return match m {
-		.gemma_3_1b_it {
+		.gemma_4_26b_a4b_it {
 			true
 		}
-		.gemma_3_4b_it {
-			true
-		}
-		.gemma_3_12b_it {
-			true
-		}
-		.gemma_3_27b_it {
+		.gemma_4_31b_it {
 			true
 		}
 		else {
@@ -33,17 +25,11 @@ pub fn (m Models) is_gemma() bool {
 
 pub fn (m Models) str() string {
 	return match m {
-		.gemma_3_1b_it {
-			'gemma-3-1b-it'
+		.gemma_4_26b_a4b_it {
+			'gemma-4-26b-a4b-it'
 		}
-		.gemma_3_4b_it {
-			'gemma-3-4b-it'
-		}
-		.gemma_3_12b_it {
-			'gemma-3-12b-it'
-		}
-		.gemma_3_27b_it {
-			'gemma-3-27b-it'
+		.gemma_4_31b_it {
+			'gemma-4-31b-it'
 		}
 		.gemini_2_5_flash_lite_preview_09_2025 {
 			'gemini-2.5-flash-lite-preview-09-2025'

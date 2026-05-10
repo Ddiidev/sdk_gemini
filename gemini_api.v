@@ -65,7 +65,9 @@ pub fn (mut sdk GeminiSDK) completation(model structs.Models, req_payload struct
 		else {
 			if resp.status_code != 200 {
 				log.debug(resp.body)
-				return structs.UnknownResponseError{}
+				return structs.UnknownResponseError{
+					code: resp.status_code
+				}
 			}
 		}
 	}

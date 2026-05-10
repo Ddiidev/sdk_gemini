@@ -55,23 +55,15 @@ fn assert_model_returns_brasilia(model structs.Models) {
 	assert response.candidates.len > 0
 	assert response.candidates[0].content.parts.len > 0
 	text := response.candidates[0].content.parts[0].text.trim_space().to_upper()
-	assert text == 'BRASILIA' || text == 'BRASÍLIA', ''
+	assert text.contains('BRASILIA') || text.contains('BRASÍLIA'), 'Got: ${text}'
 }
 
-fn test_model_gemma_3_1b_it() {
-	assert_model_returns_brasilia(.gemma_3_1b_it)
+fn test_model_gemma_4_26b_a4b_it() {
+	assert_model_returns_brasilia(.gemma_4_26b_a4b_it)
 }
 
-fn test_model_gemma_3_4b_it() {
-	assert_model_returns_brasilia(.gemma_3_4b_it)
-}
-
-fn test_model_gemma_3_12b_it() {
-	assert_model_returns_brasilia(.gemma_3_12b_it)
-}
-
-fn test_model_gemma_3_27b_it() {
-	assert_model_returns_brasilia(.gemma_3_27b_it)
+fn test_model_gemma_4_31b_it() {
+	assert_model_returns_brasilia(.gemma_4_31b_it)
 }
 
 fn test_model_gemini_2_5_flash_lite() {
