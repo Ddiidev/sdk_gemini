@@ -14,7 +14,7 @@ A V language SDK for interacting with Google's Gemini AI API. This module provid
 ## Installation
 
 ```bash
-v install Ddiidev.sdkgemini
+v install Ddiidev.sdk_gemini
 ```
 
 OR
