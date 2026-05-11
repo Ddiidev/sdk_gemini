@@ -1,4 +1,4 @@
-module sdk_gemini
+module sdkgemini
 
 import os
 import json

@@ -1,11 +1,11 @@
 module tests
 
-import sdk_gemini
+import sdkgemini
 import structs
 import os
 
 fn test_get_api_key_not_exist() ! {
-	got := sdk_gemini.get_api_key('NOT_EXIST') or {
+	got := sdkgemini.get_api_key('NOT_EXIST') or {
 		if err is structs.KeyEmptyError {
 			return
 		} else {
@@ -17,7 +17,7 @@ fn test_get_api_key_not_exist() ! {
 fn test_get_api_key_invalid() ! {
 	key := 'abcd0123456789'
 	os.setenv('MOCK_API_KEY', key, true)
-	got := sdk_gemini.get_api_key('MOCK_API_KEY') or {
+	got := sdkgemini.get_api_key('MOCK_API_KEY') or {
 		if err is structs.KeySequenceError {
 			return
 		} else {
@@ -29,14 +29,14 @@ fn test_get_api_key_invalid() ! {
 fn test_get_api_key_valid() ! {
 	key := 'AIza0123456789'
 	os.setenv('MOCK_API_KEY', key, true)
-	got := sdk_gemini.get_api_key('MOCK_API_KEY') or { return err }
+	got := sdkgemini.get_api_key('MOCK_API_KEY') or { return err }
 	assert got == key
 }
 
 fn test_new() ! {
 	key := 'AIza0123456789'
-	got := sdk_gemini.new(key)
-	assert got == sdk_gemini.GeminiSDK{
+	got := sdkgemini.new(key)
+	assert got == sdkgemini.GeminiSDK{
 		api_key: key
 	}
 }

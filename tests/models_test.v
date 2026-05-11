@@ -2,7 +2,7 @@ module tests
 
 import os
 import structs
-import sdk_gemini
+import sdkgemini
 
 const prompt_capital = 'What is the capital of Brazil?'
 const system_instruction = 'Answer with the single-word capital of Brazil, with no accents, punctuation, or extra text.'
@@ -13,7 +13,7 @@ fn assert_model_returns_brasilia(model structs.Models) {
 		assert false, 'GEMINI_API_KEY not set'
 		return
 	}
-	mut sdk := sdk_gemini.GeminiSDK{
+	mut sdk := sdkgemini.GeminiSDK{
 		api_key: api_key
 	}
 
